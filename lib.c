@@ -15,7 +15,7 @@ typedef struct{
     noeud* fin;
     int ref;
 }liste;
-
+void affiherListeProduiot(liste* li);
 void verifyListeAllocation(liste* li){
     if(li==NULL){
         perror("erreur");
@@ -95,13 +95,14 @@ void ajouter_produit_liste_milieu(liste* li){
     noeud* E;
     E = saisirProduit();
     int mileu = (li->ref)/2;
-    noeud* courant = malloc(sizeof(int)); //dans la seance du tp on a pas allouer mais normallement on doit allouer non?
+    noeud* courant ;
     //cas d'une liste vide
     if(li->debut == NULL){
         printf("la liste est vide, insertion au debut"); //on refait la verification est ce que c normal?
         ajouter_produit_liste_debut(li);
     }
     else{
+        courant = li->debut; //ici courant stock l'adresse de debut
         for(int i = 0; i<mileu-1 ; i++) {
             courant = courant->suivant;
         }
@@ -114,5 +115,4 @@ void ajouter_produit_liste_milieu(liste* li){
     }
     //augmenter le nombre d'elements
     (li->ref)++;
-
 }
