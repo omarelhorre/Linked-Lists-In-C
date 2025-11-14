@@ -3,6 +3,7 @@
 //Listes Chainee
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 typedef struct{
     char nom[50];
     float prix;
@@ -15,18 +16,23 @@ typedef struct{
     noeud* fin;
     int ref;
 }liste;
-void affiherListeProduiot(liste* li);
 void verifyListeAllocation(liste* li){
     if(li==NULL){
         perror("erreur");
         exit(EXIT_FAILURE);
     }
 }
-void verifyNoeudAllocation(noeud* li){
-    if(li==NULL){
+void verifyNoeudAllocation(noeud* E){
+    if(E==NULL){
         perror("erreur");
         exit(EXIT_FAILURE);
     }
+}
+verifyListContents(liste* li){
+    if(li->debut==NULL){
+        printf("liste vide\n" "Retour Au Menu Principale...\n");
+    }
+
 }
 liste* creer_liste_produits(void){
     liste* li = (liste *)malloc(sizeof(liste));
@@ -115,4 +121,57 @@ void ajouter_produit_liste_milieu(liste* li){
     }
     //augmenter le nombre d'elements
     (li->ref)++;
+}
+void affiherListeProduiot(liste* li){
+    verifyListContents(li);
+    noeud* ptr;
+    ptr = li->debut;
+    while(ptr !=NULL){
+        printf("Le nom du produit est : %s\nPrix : %f\nQuantite: %d\n",ptr->nom,ptr->prix,ptr->qte);
+        ptr = ptr->suivant;
+    }
+
+}
+
+void enregistrer_liste_produits(FILE* myFile,liste* li){
+    myFile = fopen("produits.txt","a+");
+    noeud* ptr;
+    ptr = li->debut;
+    verifyListContents(li);
+    while(ptr->suivant != NULL){
+        fprintf(myFile,"%s %f %d",ptr->nom,ptr->prix,ptr->qte);
+    }
+    fclose(myFile);
+}
+
+void trier_liste_produits(liste* li){
+    verifyListContents(li);
+    noeud* i;
+    noeud* j;
+    noeud*tmp;
+
+    for( i=(li->debut) ; i!=NULL; i=i->suivant)
+    {
+        for(j=(i->suivant) ; i!=NULL; j=j->suivant)
+        {
+            if(j->prix < i->prix)
+        {
+            //echange mots
+            strcpy((j->nom),(tmp->nom)); 
+            strcpy((i->nom),(j->nom));
+            strcpy((tmp->nom),(i->nom));
+
+            //echange prix
+            tmp->prix = j->prix;
+            j->prix = i->prix;
+            i->prix = tmp->prix;
+
+            //echange Qte
+            tmp->qte = j->qte;
+            j->qte = i->qte;
+            i->qte = tmp->qte;
+        }
+        }
+        
+    }
 }
