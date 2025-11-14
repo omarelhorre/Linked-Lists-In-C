@@ -4,25 +4,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-typedef struct{
+typedef struct
+{
     char nom[50];
     float prix;
     int qte;
     noeud* suivant;
 }noeud;
 
-typedef struct{
+typedef struct
+{
     noeud* debut;
     noeud* fin;
     int ref;
 }liste;
-void verifyListeAllocation(liste* li){
+void verifyListeAllocation(liste* li)
+{
     if(li==NULL){
         perror("erreur");
         exit(EXIT_FAILURE);
     }
 }
-void verifyNoeudAllocation(noeud* E){
+void verifyNoeudAllocation(noeud* E)
+{
     if(E==NULL){
         perror("erreur");
         exit(EXIT_FAILURE);
@@ -34,7 +38,8 @@ verifyListContents(liste* li){
     }
 
 }
-liste* creer_liste_produits(void){
+liste* creer_liste_produits(void)
+{
     liste* li = (liste *)malloc(sizeof(liste));
     verifyListeAllocation(li);
     li->debut = 0;
@@ -42,7 +47,8 @@ liste* creer_liste_produits(void){
     li->ref = 0;
     return(li);
 }
-noeud* creer_produit(void){
+noeud* creer_produit(void)
+{
     noeud* E1;
     E1 = malloc(sizeof(noeud));
     verifyNoeudAllocation(E1);
@@ -52,7 +58,8 @@ noeud* creer_produit(void){
     E1->suivant = NULL;
     return (E1);
 }
-noeud* saisirProduit(void){
+noeud* saisirProduit(void)
+{
     noeud* E1;
     E1= creer_produit();
     printf("entrer la designation de votre produit : ");
@@ -64,7 +71,8 @@ noeud* saisirProduit(void){
     return(E1);
 
 }
-void ajouter_produit_liste_fin(liste* li){
+void ajouter_produit_liste_fin(liste* li)
+{
     noeud* E;
     E = saisirProduit();
     //cas d'une liste vide
@@ -81,7 +89,8 @@ void ajouter_produit_liste_fin(liste* li){
     (li->ref)++;
 
 }
-void ajouter_produit_liste_debut(liste* li){
+void ajouter_produit_liste_debut(liste* li)
+{
     noeud* E;
     E = saisirProduit();
     //cas d'une liste vide
@@ -97,7 +106,8 @@ void ajouter_produit_liste_debut(liste* li){
     (li->ref)++;
 
 }
-void ajouter_produit_liste_milieu(liste* li){
+void ajouter_produit_liste_milieu(liste* li)
+{
     noeud* E;
     E = saisirProduit();
     int mileu = (li->ref)/2;
@@ -122,7 +132,8 @@ void ajouter_produit_liste_milieu(liste* li){
     //augmenter le nombre d'elements
     (li->ref)++;
 }
-void affiherListeProduiot(liste* li){
+void affiherListeProduit(liste* li)
+{
     verifyListContents(li);
     noeud* ptr;
     ptr = li->debut;
@@ -133,7 +144,8 @@ void affiherListeProduiot(liste* li){
 
 }
 
-void enregistrer_liste_produits(FILE* myFile,liste* li){
+void enregistrer_liste_produits(FILE* myFile,liste* li)
+{
     myFile = fopen("produits.txt","a+");
     noeud* ptr;
     ptr = li->debut;
@@ -144,7 +156,9 @@ void enregistrer_liste_produits(FILE* myFile,liste* li){
     fclose(myFile);
 }
 
-void trier_liste_produits(liste* li){
+void trier_liste_produits(liste* li)
+
+{
     verifyListContents(li);
     noeud* i;
     noeud* j;
@@ -152,6 +166,7 @@ void trier_liste_produits(liste* li){
 
     for( i=(li->debut) ; i!=NULL; i=i->suivant)
     {
+    
         for(j=(i->suivant) ; i!=NULL; j=j->suivant)
         {
             if(j->prix < i->prix)
@@ -174,4 +189,62 @@ void trier_liste_produits(liste* li){
         }
         
     }
+}
+
+noeud* trouver_produit_cher(liste*li)
+{
+verifyListContents(li);
+float max;
+noeud* i;
+noeud* cou;
+max = li->debut->prix;
+for(i = li->debut; i!=NULL; i = i->suivant )
+{
+    if(i->prix > max)
+    {
+        max = i->prix;
+        cou = i;
+    }
+}
+printf("l'element ayant le plus grand prix est \nNom : %s\nPrix : %f\nQuantite : %d",cou->nom,cou->prix,cou->qte);
+return cou;
+}
+
+void lireDepuisFichier(FILE *file)
+{
+    noeud* buffer = (noeud*) malloc(sizeof(noeud));
+    buffer->suivant = NULL;
+    while(fscanf(file,"%s %f %d",buffer->nom, buffer->prix,buffer->qte) == 3)
+    {
+        printf("Designation : %s | Prix : %f | Stock : %d",buffer->nom, buffer->prix,buffer->qte);
+    }
+}
+void main(void)
+{
+    printf(
+    "-----------------------------------------------------\n"
+    "Bienvenue dans programme de gestion de produits\n"
+    "-----------------------------------------------------\n"
+    "1. Creer une liste des produits\n"
+    "-----------------------------------------------------\n"
+    "2. Saisir des produit\n"
+    "-----------------------------------------------------\n"
+    "3. Ajouter produit au debut \n"
+    "-----------------------------------------------------\n"
+    "4. Ajouter produit au milieu \n"
+    "-----------------------------------------------------\n"
+    "5. Ajouter produit a la fin \n"
+    "-----------------------------------------------------\n"
+    "6.Trier liste produits \n"
+    "-----------------------------------------------------\n"
+    "7. Afficher produit plus cher \n"
+    "-----------------------------------------------------\n"
+    "8. Enregistrer liste produits \n"
+    "-----------------------------------------------------\n"
+    "9. Lire depuis fichier \n"
+    "-----------------------------------------------------\n"
+    "0.Fermer \n"
+    "-----------------------------------------------------\n"
+);
+
 }
