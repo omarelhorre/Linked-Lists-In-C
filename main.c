@@ -68,6 +68,7 @@ noeud* saisirProduit(void)
     scanf("%d",E1->prix);
     printf("entrer la quantite disponible : ");
     scanf("%d",E1->qte);
+    E1->suivant = NULL;
     return(E1);
 
 }
@@ -221,30 +222,67 @@ void lireDepuisFichier(FILE *file)
 }
 void main(void)
 {
+    liste* list;
+    list = creer_liste_produits();
+    FILE* myFile;
     printf(
     "-----------------------------------------------------\n"
     "Bienvenue dans programme de gestion de produits\n"
     "-----------------------------------------------------\n"
-    "1. Creer une liste des produits\n"
+    "0. AFficher la liste de produits a partir de la liste\n"
     "-----------------------------------------------------\n"
-    "2. Saisir des produit\n"
+    "1. Ajouter produit au debut \n"
     "-----------------------------------------------------\n"
-    "3. Ajouter produit au debut \n"
+    "2. Ajouter produit au milieu \n"
     "-----------------------------------------------------\n"
-    "4. Ajouter produit au milieu \n"
+    "3. Ajouter produit a la fin \n"
     "-----------------------------------------------------\n"
-    "5. Ajouter produit a la fin \n"
+    "4.Trier liste produits \n"
     "-----------------------------------------------------\n"
-    "6.Trier liste produits \n"
+    "5. Afficher produit plus cher \n"
     "-----------------------------------------------------\n"
-    "7. Afficher produit plus cher \n"
+    "6. Enregistrer liste produits \n"
     "-----------------------------------------------------\n"
-    "8. Enregistrer liste produits \n"
+    "7. Charger depuis fichier \n"
     "-----------------------------------------------------\n"
-    "9. Lire depuis fichier \n"
-    "-----------------------------------------------------\n"
-    "0.Fermer \n"
+    "Entrer n'importe quelle valeur pour quitter le programme \n"
     "-----------------------------------------------------\n"
 );
+int n;
+char ans;
+//choix de l'utilisateur
+do
+{
+printf("Effectuer un choix : ");
+scanf("%c",&ans);
+}while (ans<0 || ans> 9);
 
+printf(
+    "-----------------------------------------------------\n"
+    "Choix effectue"
+    "-----------------------------------------------------\n");
+switch (ans)
+{
+case 0:
+    affiherListeProduit(list);
+    break;
+case 1:
+    ajouter_produit_liste_debut(list);
+    break;
+case 2:
+    ajouter_produit_liste_milieu(list);
+case 3:
+    ajouter_produit_liste_fin(list);
+case 4:
+    trier_liste_produits(list);
+case 5:
+trouver_produit_cher(list);
+case 6:
+enregistrer_liste_produits(myFile,list);
+case 7:
+lireDepuisFichier(myFile);
+default:
+exit(1);
+    break;
+}
 }
