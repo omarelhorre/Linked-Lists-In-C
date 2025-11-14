@@ -4,12 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-typedef struct
+typedef struct noeud
 {
     char nom[50];
     float prix;
     int qte;
-    noeud* suivant;
+    struct noeud* suivant;
 }noeud;
 
 typedef struct
@@ -32,12 +32,7 @@ void verifyNoeudAllocation(noeud* E)
         exit(EXIT_FAILURE);
     }
 }
-verifyListContents(liste* li){
-    if(li->debut==NULL){
-        printf("liste vide\n" "Retour Au Menu Principale...\n");
-    }
 
-}
 liste* creer_liste_produits(void)
 {
     liste* li = (liste *)malloc(sizeof(liste));
@@ -65,9 +60,9 @@ noeud* saisirProduit(void)
     printf("entrer la designation de votre produit : ");
     scanf("%s",E1->nom);
     printf("entrer le prix de votre produit : ");
-    scanf("%d",E1->prix);
+    scanf("%f",&E1->prix);
     printf("entrer la quantite disponible : ");
-    scanf("%d",E1->qte);
+    scanf("%d",&E1->qte);
     E1->suivant = NULL;
     return(E1);
 
@@ -80,7 +75,6 @@ void ajouter_produit_liste_fin(liste* li)
     if(li->debut == NULL){
         li->debut = E;
         li->fin = E;
-
     }
     else{
         li->fin->suivant = E;
@@ -135,7 +129,9 @@ void ajouter_produit_liste_milieu(liste* li)
 }
 void affiherListeProduit(liste* li)
 {
-    verifyListContents(li);
+    if(li->debut==NULL){
+        printf("liste vide\n");
+    }
     noeud* ptr;
     ptr = li->debut;
     while(ptr !=NULL){
@@ -148,11 +144,17 @@ void affiherListeProduit(liste* li)
 void enregistrer_liste_produits(FILE* myFile,liste* li)
 {
     myFile = fopen("produits.txt","a+");
+    if(myFile == NULL){
+        perror("Erreur");
+    }
     noeud* ptr;
     ptr = li->debut;
-    verifyListContents(li);
-    while(ptr->suivant != NULL){
-        fprintf(myFile,"%s %f %d",ptr->nom,ptr->prix,ptr->qte);
+    if(ptr==NULL){
+        printf("liste vide\n");
+    }
+    while(ptr != NULL){
+        fprintf(myFile,"%s %f %d\n",ptr->nom,ptr->prix,ptr->qte);
+        ptr = ptr->suivant;
     }
     fclose(myFile);
 }
@@ -160,45 +162,51 @@ void enregistrer_liste_produits(FILE* myFile,liste* li)
 void trier_liste_produits(liste* li)
 
 {
-    verifyListContents(li);
+    if(li->debut==NULL){
+        printf("liste vide\n");
+    }
     noeud* i;
     noeud* j;
-    noeud*tmp;
+    noeud* tmp = malloc(sizeof(noeud));
 
-    for( i=(li->debut) ; i!=NULL; i=i->suivant)
+    for( i=(li->debut) ; i!=NULL; i= (i->suivant) )
     {
     
-        for(j=(i->suivant) ; i!=NULL; j=j->suivant)
+        for(j= (i->suivant) ; j!=NULL; j= (j->suivant) )
         {
-            if(j->prix < i->prix)
+            if( (j->prix) < (i->prix) )
         {
             //echange mots
-            strcpy((j->nom),(tmp->nom)); 
-            strcpy((i->nom),(j->nom));
-            strcpy((tmp->nom),(i->nom));
+            strcpy((tmp->nom),(j->nom)); 
+            strcpy((j->nom),(i->nom));
+            strcpy((i->nom),(tmp->nom));
 
             //echange prix
-            tmp->prix = j->prix;
-            j->prix = i->prix;
-            i->prix = tmp->prix;
+            (tmp->prix) = (j->prix);
+            (j->prix) = (i->prix);
+            (i->prix) = (tmp->prix);
 
             //echange Qte
-            tmp->qte = j->qte;
-            j->qte = i->qte;
-            i->qte = tmp->qte;
+            (tmp->qte) = (j->qte);
+            (j->qte) = (i->qte);
+            (i->qte) = (tmp->qte);
         }
         }
         
     }
+    printf("tri effectue\n");
 }
 
 noeud* trouver_produit_cher(liste*li)
 {
-verifyListContents(li);
+if(li->debut==NULL){
+        printf("liste vide\n");
+    }
 float max;
 noeud* i;
 noeud* cou;
 max = li->debut->prix;
+cou = li->debut;
 for(i = li->debut; i!=NULL; i = i->suivant )
 {
     if(i->prix > max)
@@ -207,24 +215,28 @@ for(i = li->debut; i!=NULL; i = i->suivant )
         cou = i;
     }
 }
-printf("l'element ayant le plus grand prix est \nNom : %s\nPrix : %f\nQuantite : %d",cou->nom,cou->prix,cou->qte);
+printf("l'element ayant le plus grand prix est \nNom : %s\nPrix : %f\nQuantite : %d\n",cou->nom,cou->prix,cou->qte);
 return cou;
 }
 
 void lireDepuisFichier(FILE *file)
 {
+    file = fopen("produits.txt","r");
     noeud* buffer = (noeud*) malloc(sizeof(noeud));
     buffer->suivant = NULL;
-    while(fscanf(file,"%s %f %d",buffer->nom, buffer->prix,buffer->qte) == 3)
+    while(fscanf(file,"%s %f %d",buffer->nom, &buffer->prix,&buffer->qte) == 3)
     {
         printf("Designation : %s | Prix : %f | Stock : %d",buffer->nom, buffer->prix,buffer->qte);
     }
+    fclose(file);
+    free(buffer);
 }
 void main(void)
 {
     liste* list;
     list = creer_liste_produits();
     FILE* myFile;
+    label:
     printf(
     "-----------------------------------------------------\n"
     "Bienvenue dans programme de gestion de produits\n"
@@ -249,17 +261,18 @@ void main(void)
     "-----------------------------------------------------\n"
 );
 int n;
-char ans;
+int ans;
 //choix de l'utilisateur
+
 do
-{
+{ 
 printf("Effectuer un choix : ");
-scanf("%c",&ans);
+scanf("%d",&ans); 
 }while (ans<0 || ans> 9);
 
 printf(
     "-----------------------------------------------------\n"
-    "Choix effectue"
+    "Choix effectue\n"
     "-----------------------------------------------------\n");
 switch (ans)
 {
@@ -271,18 +284,26 @@ case 1:
     break;
 case 2:
     ajouter_produit_liste_milieu(list);
+    break;
 case 3:
     ajouter_produit_liste_fin(list);
+    break;
 case 4:
     trier_liste_produits(list);
+    break;
 case 5:
 trouver_produit_cher(list);
+break;
 case 6:
 enregistrer_liste_produits(myFile,list);
+break;
 case 7:
 lireDepuisFichier(myFile);
+break;
 default:
+free(list);
 exit(1);
     break;
 }
+goto label;
 }
