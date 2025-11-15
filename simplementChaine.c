@@ -37,8 +37,8 @@ liste* creer_liste_produits(void)
 {
     liste* li = (liste *)malloc(sizeof(liste));
     verifyListeAllocation(li);
-    li->debut = 0;
-    li->fin = 0;
+    li->debut = NULL;
+    li->fin = NULL;
     li->ref = 0;
     return(li);
     printf("Creation liste...\n");
@@ -49,13 +49,13 @@ noeud* creer_produit(void)
     noeud* E1;
     E1 = malloc(sizeof(noeud));
     verifyNoeudAllocation(E1);
+    printf("Creation produit\n");
     E1->qte = 0;
     E1->prix = 0;
     E1->nom[0] = '\0'; //on initialise comme ca?
     E1->suivant = NULL;
-    return (E1);
-    printf("Creation produit\n");
     printf("Produit cree \n\n");
+    return (E1);
 }
 noeud* saisirProduit(void)
 {
@@ -68,8 +68,9 @@ noeud* saisirProduit(void)
     printf("entrer la quantite disponible : ");
     scanf("%d",&E1->qte);
     E1->suivant = NULL;
-    return(E1);
     printf("Element saisi avec succes \n\n");
+    return(E1);
+    
 
 }
 void ajouter_produit_liste_fin(liste* li)
@@ -110,23 +111,24 @@ void ajouter_produit_liste_debut(liste* li)
 }
 void ajouter_produit_liste_milieu(liste* li)
 {
-    noeud* E;
-    E = saisirProduit();
-    int mileu = (li->ref)/2;
+    int milieu = (li->ref)/2;
     noeud* courant ;
     //cas d'une liste vide
     if(li->debut == NULL){
         printf("la liste est vide, insertion au debut"); //on refait la verification est ce que c normal?
         ajouter_produit_liste_debut(li);
+        return;
     }
-    else{
+    noeud* E;
+    E = saisirProduit();
+    
         courant = li->debut; //ici courant stock l'adresse de debut
-        for(int i = 0; i<mileu-1 ; i++) {
+        for(int i = 0; i<milieu-1 ; i++) {
             courant = courant->suivant;
         }
         E->suivant = courant->suivant;
         courant->suivant = E;
-    }
+    
     if(E->suivant == NULL){
         printf("l'element est insere a la fin!\n");
         li->fin = E;
@@ -134,11 +136,13 @@ void ajouter_produit_liste_milieu(liste* li)
     //augmenter le nombre d'elements
     (li->ref)++;
     printf("Element insere au milieu avec succes\n\n");
+    return;
 }
 void affiherListeProduit(liste* li)
 {
     if(li->debut==NULL){
         printf("liste vide\n");
+        return;
     }
     noeud* ptr;
     ptr = li->debut;
@@ -154,12 +158,14 @@ void enregistrer_liste_produits(FILE* myFile,liste* li)
     myFile = fopen("produits.txt","w"); // ca ecrase tout fichier existant et cree si il n'existe pas
     if(myFile == NULL){
         perror("Erreur");
+        exit(EXIT_FAILURE);
     }
     noeud* ptr;
     ptr = li->debut;
     if(ptr==NULL){
         printf("liste vide\n"
         "Retour Au Menu Principale...");
+        return;
     }
     while(ptr != NULL){
         fprintf(myFile,"%s %f %d\n",ptr->nom,ptr->prix,ptr->qte);
@@ -174,6 +180,7 @@ void trier_liste_produits(liste* li)
     if(li->debut==NULL){
         printf("liste vide\n");
         printf("Retour au Menu Principale \n\n");
+        return;
     }
     noeud* i;
     noeud* j;
@@ -205,12 +212,14 @@ void trier_liste_produits(liste* li)
         
     }
     printf("tri effectue\n");
+    free(tmp);
 }
 
 noeud* trouver_produit_cher(liste*li)
 {
 if(li->debut==NULL){
         printf("liste vide\n");
+        return NULL;
     }
 float max;
 noeud* i;
@@ -225,8 +234,6 @@ for(i = li->debut; i!=NULL; i = i->suivant )
         cou = i;
     }
 }
-printf("l'element ayant le plus grand prix est \n"
-    "Nom : %s | Prix : %f | Quantite : %d\n",cou->nom,cou->prix,cou->qte);
 return cou;
 }
 
@@ -236,6 +243,7 @@ void lireDepuisFichier(liste* li,FILE *file)
     file = fopen("produits.txt","r");
     if(file == NULL){
         perror("erreur");
+        exit(EXIT_FAILURE);
     }
     noeud buffer;
         while(fscanf(file,"%s %f %d",buffer.nom, &buffer.prix,&buffer.qte) == 3)
@@ -320,7 +328,12 @@ case 4:
     trier_liste_produits(list);
     break;
 case 5:
-trouver_produit_cher(list);
+noeud* prod;
+prod = trouver_produit_cher(list);
+if(prod == NULL){
+    break;
+}
+printf("l'adress du produit plus cher est : nom : %s | prix : %f | stock %d", prod->nom,prod->prix,prod->qte );
 break;
 case 6:
 enregistrer_liste_produits(myFile,list);
