@@ -41,6 +41,8 @@ liste* creer_liste_produits(void)
     li->fin = 0;
     li->ref = 0;
     return(li);
+    printf("Creation liste...\n");
+    printf("Liste cree avec succes \n\n");
 }
 noeud* creer_produit(void)
 {
@@ -52,6 +54,8 @@ noeud* creer_produit(void)
     E1->nom[0] = '\0'; //on initialise comme ca?
     E1->suivant = NULL;
     return (E1);
+    printf("Creation produit\n");
+    printf("Produit cree \n\n");
 }
 noeud* saisirProduit(void)
 {
@@ -65,6 +69,7 @@ noeud* saisirProduit(void)
     scanf("%d",&E1->qte);
     E1->suivant = NULL;
     return(E1);
+    printf("Element saisi avec succes \n\n");
 
 }
 void ajouter_produit_liste_fin(liste* li)
@@ -82,6 +87,7 @@ void ajouter_produit_liste_fin(liste* li)
     }
     //ajouter le nombre d'elements
     (li->ref)++;
+    printf("Element saisi a la fin avec succes \n\n");
 
 }
 void ajouter_produit_liste_debut(liste* li)
@@ -99,6 +105,7 @@ void ajouter_produit_liste_debut(liste* li)
     }
     //ajouter le nombre d'elements
     (li->ref)++;
+    printf("Element ajoute au debut avec succes \n\n");
 
 }
 void ajouter_produit_liste_milieu(liste* li)
@@ -126,6 +133,7 @@ void ajouter_produit_liste_milieu(liste* li)
     }
     //augmenter le nombre d'elements
     (li->ref)++;
+    printf("Element insere au milieu avec succes\n\n");
 }
 void affiherListeProduit(liste* li)
 {
@@ -135,7 +143,7 @@ void affiherListeProduit(liste* li)
     noeud* ptr;
     ptr = li->debut;
     while(ptr !=NULL){
-        printf("Le nom du produit est : %s\nPrix : %f\nQuantite: %d\n",ptr->nom,ptr->prix,ptr->qte);
+        printf("Nom : %s | Prix : %f | Quantite : %d\n\n",ptr->nom,ptr->prix,ptr->qte);
         ptr = ptr->suivant;
     }
 
@@ -150,7 +158,8 @@ void enregistrer_liste_produits(FILE* myFile,liste* li)
     noeud* ptr;
     ptr = li->debut;
     if(ptr==NULL){
-        printf("liste vide\n");
+        printf("liste vide\n"
+        "Retour Au Menu Principale...");
     }
     while(ptr != NULL){
         fprintf(myFile,"%s %f %d\n",ptr->nom,ptr->prix,ptr->qte);
@@ -164,6 +173,7 @@ void trier_liste_produits(liste* li)
 {
     if(li->debut==NULL){
         printf("liste vide\n");
+        printf("Retour au Menu Principale \n\n");
     }
     noeud* i;
     noeud* j;
@@ -215,42 +225,39 @@ for(i = li->debut; i!=NULL; i = i->suivant )
         cou = i;
     }
 }
-printf("l'element ayant le plus grand prix est \nNom : %s\nPrix : %f\nQuantite : %d\n",cou->nom,cou->prix,cou->qte);
+printf("l'element ayant le plus grand prix est \n"
+    "Nom : %s | Prix : %f | Quantite : %d\n",cou->nom,cou->prix,cou->qte);
 return cou;
 }
 
 void lireDepuisFichier(liste* li,FILE *file)
 {
+
     file = fopen("produits.txt","r");
-    noeud* buffer = (noeud*) malloc(sizeof(noeud));
-    noeud* ptr;
-    ptr=li->debut;
-    buffer->suivant = NULL;
-    if(li->fin == NULL ){
-        printf("liste vide\n");
-        printf("Ajout à la tete...\n");
-        while(fscanf(file,"%s %f %d",buffer->nom, &buffer->prix,&buffer->qte) == 3)
+    if(file == NULL){
+        perror("erreur");
+    }
+    noeud buffer;
+        while(fscanf(file,"%s %f %d",buffer.nom, &buffer.prix,&buffer.qte) == 3)
     {
-                strcpy(ptr->nom,buffer->nom);
-                ptr->prix = buffer->prix;
-                ptr->qte = buffer->qte;
-                ptr = ptr->suivant;
+                noeud* ptr = creer_produit();
+                strcpy(ptr->nom,buffer.nom);
+                ptr->prix = buffer.prix;
+                ptr->qte = buffer.qte;
+                // deja faite dans la fct ptr->suivant = NULL;
+                if(li->fin == NULL){
+                    li->fin = li->debut = ptr;
+                }
+                else{
+                    li->fin->suivant = ptr;
+                    li->fin = ptr;
+                }
+    li->ref ++;       
     }   
         
-    }
-    else if(li->fin != NULL)
-    ptr = ptr->suivant;
-    {
-    while(fscanf(file,"%s %f %d",buffer->nom, &buffer->prix,&buffer->qte) == 3)
-    {
-        strcpy(ptr->nom,buffer->nom);
-        ptr->prix = buffer->prix;
-        ptr->qte = buffer->qte;
-        ptr = ptr->suivant;    
-    }
-}
+
     fclose(file);
-    free(buffer);
+    printf("fichier lis avec succes\n"); 
 }
 void main(void)
 {
