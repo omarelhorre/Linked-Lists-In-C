@@ -1,3 +1,5 @@
-oflag = -o
-p1 : main.c
-	gcc $(oflag) p1 main.c
+cflag = -o
+simpleNC : simplementChaine.c
+	gcc $(cflag) simpleNC simplementChaine.c
+doubleNC : doublementChaine.c
+	gcc $(cflag) doubleNC doublementChaine.c
