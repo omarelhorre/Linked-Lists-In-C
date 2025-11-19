@@ -84,7 +84,6 @@ void ajouter_produit_liste_fin(list* li){
     printf("element ajoute avec succes\n\n");
 }
 
-//pas meme traitement que prof peut etre qu elle parle d une liste circulaire doublement chainee
 int ajouter_produit_liste_milieu(list* li){
     int milieu;
     /* if(li->fin == NULL)
@@ -99,7 +98,7 @@ int ajouter_produit_liste_milieu(list* li){
     courant = li->debut;
     if(li->nef < 2){
         printf("aucun element ou un seul existe dans la liste\n\n");
-        ajouter_produit_liste_fin(li); //comme debut comme fin?
+        ajouter_produit_liste_fin(li); 
         return 0;
     }
     noeud* ptr = saisir_produit();
@@ -208,7 +207,7 @@ void trier_liste_produits(list* li){
     noeud tmp;
     noeud* i;
     noeud* j;
-    //pq le pas est i->suivant alors que dans les tableau c est t+i
+    
     for(i = li->debut ; i!= NULL; i=i->suivant){
         for(j=i->suivant; j!=NULL; j=j->suivant){
             if(i->prix > j->prix){

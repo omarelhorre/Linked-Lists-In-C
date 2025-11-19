@@ -52,7 +52,7 @@ noeud* creer_produit(void)
     printf("Creation produit\n");
     E1->qte = 0;
     E1->prix = 0;
-    E1->nom[0] = '\0'; //on initialise comme ca?
+    E1->nom[0] = '\0'; 
     E1->suivant = NULL;
     printf("Produit cree \n\n");
     return (E1);
@@ -115,7 +115,7 @@ void ajouter_produit_liste_milieu(liste* li)
     noeud* courant ;
     //cas d'une liste vide
     if(li->debut == NULL){
-        printf("la liste est vide, insertion au debut"); //on refait la verification est ce que c normal?
+        printf("la liste est vide, insertion au debut"); 
         ajouter_produit_liste_debut(li);
         return;
     }
