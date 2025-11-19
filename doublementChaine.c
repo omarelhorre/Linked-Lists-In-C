@@ -257,6 +257,7 @@ void libererListe(list* li){
     noeud* ptr;
     noeud* prec;
     prec = NULL;
+    ptr= li->debut;
     while(ptr!=NULL){
         prec = ptr;
         ptr = ptr->suivant;
@@ -264,7 +265,7 @@ void libererListe(list* li){
     }
     li->debut = NULL;
     li->fin = NULL;
-    li->nef = NULL;
+    li->nef = 0;
 }
 
 void main(void)
